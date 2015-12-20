@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <script src="js/d3.v3.min.js"></script>
-  <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>
+  <!-- <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>v -->
 
   <style>
     circle.dimple-series-1{
@@ -13,10 +13,24 @@
     h2{
       text-align: center;
     }
+
+    .axis path,.axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
 <script type="text/javascript">
+
+//d3.select("body").append("h3").text("Titanic Survivorship based on  Age, Gender and Class").style("text-align","center");
+
 /*
   Use D3 (not dimple.js) to load the TSV file
   and pass the contents of it to the draw function
@@ -53,21 +67,25 @@ function getGender(gender){
 
 function getRandom(){
   if(Math.random() < 0.5)
-    return Math.random() * 40 *-1;
+    return Math.random() * 30 *-1;
   else
-    return Math.random() * 40;
+    return Math.random() * 30;
 
   
 }
 
 var ageScale = d3.scale.linear()
                  .domain([4,98])
-                 .range([1,20]);
+                 .range([2,10]);
 
 
-var xScale = d3.scale.ordinal().domain(['female','male']).range(['0','1']).rangeBands([0,190]);
+var xScale = d3.scale.ordinal().domain(['female','male']).range(['0','1']).rangeBands([100,260]);
 
-var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
+var xAxis = d3.svg.axis().scale(xScale).orient('bottom').ticks(2);
+
+var yScale = d3.scale.ordinal().domain(['first', 'second', 'third']).range([0,1,2]).rangeBands([50,360]);
+
+var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(3);
 
 
 
@@ -80,7 +98,7 @@ function drawPlot(dataset){
      .append("circle")
      .attr({
         cy:function(d){return  d.Pclass*100 + getRandom();},
-        cx:function(d){return 60 + getGender(d.Sex)*100 + getRandom();},
+        cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
         r:function(d){return ageScale(d.Age);},
         fill : function(d){
           if( d.Survived === "0"){
@@ -95,7 +113,44 @@ function drawPlot(dataset){
 
 
   svg.append("g").call(xAxis).attr("class","axis")
-                             .attr("transform","translate(20,"+(h-20)+")");
+                             .attr("transform","translate(20,"+(h-40)+")");
+  svg.append("g").call(yAxis).attr("class","axis")  
+                             .attr("transform","translate("+80+",0)");
+
+  // add axis labels
+  svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "center")
+    .attr("y", 15)
+    .attr("x",-200)
+    .attr("transform", "rotate(-90)")
+    .text("Ticket Class");
+
+  svg.append("text")
+     .attr("class","x label")
+     .attr({"y" : 400 ,"x" : 180, "text-anchor" :"center"}).text("Gender")
+
+  //add guides
+  d3.select('svg').append('circle').attr({cx:350, cy:70,r:6, fill:"#00ff00"});
+  d3.select('svg').append('text').attr({x:370, y:75}).text("Survived");
+
+  d3.select('svg').append('circle').attr({cx:350, cy:90,r:6, fill:"#666666"});
+  d3.select('svg').append('text').attr({x:370, y:95}).text("Not Survived");
+
+  //add age guides
+  d3.select('svg').append('circle').attr({cx:350, cy:130,r:ageScale(4), fill:"#666666", stroke:"white"});
+  d3.select('svg').append('text').attr({x:370, y:135}).text("Age 4 yrs");
+
+  
+  d3.select('svg').append('circle').attr({cx:350, cy:150,r:ageScale(40), fill:"#666666", stroke:"white"});
+  d3.select('svg').append('text').attr({x:370, y:155}).text("Age 40 yrs");
+
+
+  d3.select('svg').append('circle').attr({cx:350, cy:170,r:ageScale(90), fill:"#666666", stroke:"white"});
+  d3.select('svg').append('text').attr({x:370, y:175}).text("Age 98 yrs");
+
+  //add title
+  d3.select("svg").append("text").text("Titanic Survivorship data by age, gender,class").attr({x:70,y:20,"font-size":"20px"})
 
 
 }
