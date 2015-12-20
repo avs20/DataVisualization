@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>
 
   <style>
     circle.dimple-series-1{
@@ -21,7 +21,86 @@
   Use D3 (not dimple.js) to load the TSV file
   and pass the contents of it to the draw function
   */
-d3.tsv("world_cup.tsv", draw);
+d3.csv("data/train.csv", draw);
+var ds;
+function draw(error,data){
+  if(error){
+    console.log("error");
+  }else{
+
+    console.log(data.length)
+
+    drawPlot(data);
+    this.ds = data;
+  }
+}
+
+/*
+I have to plot the data with age,survived, gender, class
+y - axis is class and x-axis is gender.So how to set data and axis in , first lets plot all the point
+*/
+var w = 500;
+var h = 400;
+var svg  = d3.select("body").append("svg").attr({width:w,height:h});
+
+function getGender(gender){
+  if(gender === 'female')
+    return 0;
+  else
+    return 1;
+
+}
+
+function getRandom(){
+  if(Math.random() < 0.5)
+    return Math.random() * 40 *-1;
+  else
+    return Math.random() * 40;
+
+  
+}
+
+var ageScale = d3.scale.linear()
+                 .domain([4,98])
+                 .range([1,20]);
+
+
+var xScale = d3.scale.ordinal().domain(['female','male']).range(['0','1']).rangeBands([0,190]);
+
+var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
+
+
+
+
+function drawPlot(dataset){
+
+  svg.selectAll("circle")
+     .data(dataset)
+     .enter()
+     .append("circle")
+     .attr({
+        cy:function(d){return  d.Pclass*100 + getRandom();},
+        cx:function(d){return 60 + getGender(d.Sex)*100 + getRandom();},
+        r:function(d){return ageScale(d.Age);},
+        fill : function(d){
+          if( d.Survived === "0"){
+            return '#666666';            
+          }else{
+            return '#00ff00';            
+          }
+        },
+        stroke:"white"
+              
+     });
+
+
+  svg.append("g").call(xAxis).attr("class","axis")
+                             .attr("transform","translate(20,"+(h-20)+")");
+
+
+}
+
+
 </script>
 </body>
 </html>
