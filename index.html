@@ -11,7 +11,7 @@
     }
 
     h2{
-      text-align: center;
+      text-align: left;
     }
 
     .axis path,.axis line {
@@ -172,11 +172,12 @@ function drawPlot(dataset){
         cy : function (d){ return getYByClass(d) + getYByAge(d);},
         //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
         cx:function(d){return getXByAge(d)+getXByGender(d)},
-        r:function(d){return ageScale(d.Age);},
+        //r:function(d){return ageScale(d.Age);},
+        r:function(d){return 3;},
         alpha:0.5,
         fill : function(d){
           if( d.Survived === "0"){
-            return '#E69F3F';            
+            return '#123456';            
           }else{
             return '#A0D25B';            
           }
@@ -207,20 +208,20 @@ function drawPlot(dataset){
   d3.select('svg').append('circle').attr({cx:480, cy:90,r:6, fill:"#A0D25B  "});
   d3.select('svg').append('text').attr({x:500 , y:95}).text("Survived");
 
-  d3.select('svg').append('circle').attr({cx:480, cy:110,r:6, fill:"#E69F3F"});
+  d3.select('svg').append('circle').attr({cx:480, cy:110,r:6, fill:"#666666"});
   d3.select('svg').append('text').attr({x:500, y:115}).text("Not Survived");
 
   //add age guides
-  d3.select('svg').append('circle').attr({cx:480, cy:150,r:ageScale(4), fill:"#666666", stroke:"white"});
-  d3.select('svg').append('text').attr({x:500, y:155}).text("Age 4 yrs");
+  // d3.select('svg').append('circle').attr({cx:480, cy:150,r:ageScale(4), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:155}).text("Age 4 yrs");
 
   
-  d3.select('svg').append('circle').attr({cx:480, cy:170,r:ageScale(40), fill:"#666666", stroke:"white"});
-  d3.select('svg').append('text').attr({x:500, y:175}).text("Age 40 yrs");
+  // d3.select('svg').append('circle').attr({cx:480, cy:170,r:ageScale(40), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:175}).text("Age 40 yrs");
 
 
-  d3.select('svg').append('circle').attr({cx:480, cy:190,r:ageScale(90), fill:"#666666", stroke:"white"});
-  d3.select('svg').append('text').attr({x:500, y:195}).text("Age 98 yrs");
+  // d3.select('svg').append('circle').attr({cx:480, cy:190,r:ageScale(90), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:195}).text("Age 98 yrs");
 
   //add title
   d3.select("svg").append("text").text("Titanic Survivorship data by age, gender,class").attr({x:110,y:20,"font-size":"20px","text-anchor":"center"})
