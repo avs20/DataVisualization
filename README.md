@@ -64,6 +64,9 @@ The biggest question I am thinking about is what each point represents now?
 Also the plot intensity is not discriminating enough to represent many 
 individuals at that age.
 
+Now I am going to put every individual as a point (2px) on the plot and then see
+how it looks.
+
 
 
 
