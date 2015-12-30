@@ -30,7 +30,7 @@ The main problem with this plot is incomprehensible age data. I thought that age
 The plot will be almost same just this time it will be more regularized. Instead of randomly placing the circles in the strip of class I am gonna place them in increments of age. So like in third class and the female block the first line will contain the small circles as age less ==> small circle, then in second line the circles will be bigger and so on. This will be done in all the blocks of class and gender and hence in the new plot we can see age clearly and comprehend.
 Here is a rough sketch on paper and pen.
 
-![](version/sketch_v2.png)
+![](versions/sketch_v2.png)
 
 
 
