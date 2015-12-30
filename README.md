@@ -32,5 +32,41 @@ Here is a rough sketch on paper and pen.
 
 ![](versions/sketch_v2.png)
 
+I acheived the effect that I wanted to acheive and here is the plot
+
+![](versions/plot_v2.png)
+
+The plot now looks beautiful. I changed the color used for the not survived and 
+arranged the circles by their age size. There are some concentric circles
+representing that at same age some individuals survived and others not. There
+are also some big circles in between the smaller circles which should not be 
+there. 
+
+The [feedback](Feedback.md) also reports this and I am working on the next 
+version. 
+
+Age needs more work as on dividing the tickets into age group the age legend is 
+now obsolete and adds confusion(still). I am going to make all points of 
+same size and just arrange them. The concentric circles effect will still be
+present.
+
+Here is the plot 
+
+![](versions/plot_v4.png)
+
+Well I made the plot but now I am confused. 
+
+* The colors are darkened based on the number of persons at that age level. 
+* I also need to add scale/guide about what each row suggests. (age group 
+intervals)
+
+The biggest question I am thinking about is what each point represents now? 
+Also the plot intensity is not discriminating enough to represent many 
+individuals at that age.
+
+
+
+
+
 
 
