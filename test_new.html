@@ -1,0 +1,41 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="js/d3.v3.min.js"></script>
+  <!-- <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>v -->
+  
+  </head>
+<body>
+<script type="text/javascript">
+d3.csv("data/train.csv", draw);
+
+var ds;
+
+function draw(error,data){
+  if(error){
+    console.log("error");
+  }else{
+
+    console.log(data.length)
+
+    drawPlot(data);
+    this.ds = data;
+  }
+}
+
+function drawPlot(dataset){
+	console.log('function running');
+
+	var d = d3.nest()
+		.key(function(d) { return d.Sex ; })
+		.key(function(d) {return d.Pclass ; })
+		.rollup(function(leaves) { return leaves.length; })
+		.entries(dataset);
+	
+	table(d);
+	
+}
+
+
+</script>
+
