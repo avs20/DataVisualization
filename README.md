@@ -1,5 +1,8 @@
 ### Data Visualization Process
 
+Update : The latest version can be seen [here](https://rawgit.com/avs20/DataVisualization/master/index_2.html)
+
+
 This is the initial idea that I am starting to work on
 
 ![](versions/sketch_v1.jpg)
