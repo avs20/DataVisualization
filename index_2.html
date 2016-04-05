@@ -48,9 +48,16 @@
  /*  pointer-events: none;	This line needs to be removed */
 	
 }
+
+h3{
+    text-align: center;
+    padding-top: 40px;
+}
   </style>
 </head>
 <body>
+    
+    <h3> Titanic Survivorhip by Age and Class </h3>
 <script type="text/javascript">
 
 function draw(data){
@@ -80,10 +87,11 @@ var ds = data;
 
 var infodata = d3.nest()
                 .key(function(da){return +da.Age;})
+                .sortKeys(d3.ascending)
                 .rollup(function(g){
                     return { total : g.length };
                 })
-                .sortKeys(d3.ascending)
+                
                 .entries(data);
 
 
@@ -230,8 +238,23 @@ d3.select("svg")
     .attr("class","y axis")
     .attr("transform",  "translate("+ margin + ",0)")
     .call(class_axis);
+    //add labels for axis 
+d3.select("svg")
+    .append("text")
+    .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+    .attr("transform", "translate("+ w/2 +","+(h+margin)+")")  // text is drawn off the screen top left, move down and out and rotate
+    .text("Age");
+    
+d3.select("svg")
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("transform","translate(0," + h/2 +")rotate(-90)")
+    .text("Ticket Class");
 
 };
+
+
+
 </script>
 
 <script type="text/javascript">
