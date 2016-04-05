@@ -131,7 +131,7 @@ var age_scale = d3.scale.linear()
     
 var age_axis = d3.svg.axis()
                 .scale(age_scale)
-                .ticks(40);
+                .ticks(10);
 
 
 
@@ -183,25 +183,27 @@ function generateTooltip(d){
 
 
 function drawPlot(dataset){
-    svg.selectAll("circle")
+    svg.selectAll("rect")
      .data(dataset)
      .enter()
-     .append("circle")
+     .append("rect")
      .attr({
         //cy:function(d){return  d.Pclass*100 + getRandom();},
-        cy : function (d){ return class_scale(class_map(d.Pclass));},
+        y : function (d){ return class_scale(class_map(d.Pclass)) -5/2;},
         //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
-        cx:function(d){return age_scale(d.Age);},
+        x:function(d){return age_scale(d.Age)-5/2;},
         //r:function(d){return ageScale(d.Age);},
-        r:function(d){return 5;},
-        alpha:0.2,
-        fill : function(d){
+        width:function(d){return 5;},
+        height:function(d){return 10;},
+        opacity:0.3,
+        
+        fill:function(d){
           if( d.Survived === "0"){
             return '#666666';            
           }else{
             return '#A0D25B';            
           }
-        },
+        }
         
               
      }).on('mouseover', function(d){
