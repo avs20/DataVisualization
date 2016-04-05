@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="js/d3.v3.min.js"></script>
+  <!-- <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>v -->
+
+  <style>
+    circle.dimple-series-1{
+      fill:red;
+    }
+
+    h2{
+      text-align: left;
+    }
+
+    .axis path,.axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+    }
+
+    circle {
+      fill-opacity: .8;
+    }
+
+    svg{
+      padding: 80px;  
+      display: block;
+      margin: auto;
+    }
+    
+    div.tooltip {
+  position: absolute;	
+  text-align: center;	
+  height:60px;	
+  
+  padding: 2px;	
+  font: 12px sans-serif;	
+  background: lightsteelblue;	
+  border: 0px;					
+  border-radius: 8px;
+ /*  pointer-events: none;	This line needs to be removed */
+	
+}
+  </style>
+</head>
+<body>
+<script type="text/javascript">
+
+function draw(data){
+
+w = 900;
+h = 200;
+margin = 50;
+
+var svg  = d3.select("body").append("svg").attr({width:w,height:h});
+
+
+// Define 'div' for tooltips
+var div = d3.select("body")
+	.append("div")  // declare the tooltip div 
+	.attr("class", "tooltip")              // apply the 'tooltip' class
+	.style("opacity", 0);                  // set the opacity to nil
+                
+
+
+/*
+  Use D3 (not dimple.js) to load the TSV file
+  and pass the contents of it to the draw function
+  */
+
+var ds = data;
+
+
+var infodata = d3.nest()
+                .key(function(da){return +da.Age;})
+                .rollup(function(g){
+                    return { total : g.length };
+                })
+                .sortKeys(d3.ascending)
+                .entries(data);
+
+
+/*
+
+Axis Building with extents
+
+*/
+
+
+var class_extent = d3.extent(ds,function(d){
+    return d.Pclass;
+});
+
+var class_scale = d3.scale.ordinal()
+    .domain(["","Third","Second","First"])
+    .range([0,3 ,2,1])
+    .rangePoints([h,margin]);
+    
+    
+    
+var class_axis = d3.svg.axis()
+                    .scale(class_scale)
+                    .orient("left")
+                    .ticks(3);
+                    
+
+
+
+var age_extent = d3.extent(ds,function(d){
+    return +d['Age'];
+});
+
+var age_scale = d3.scale.linear()
+    .range([margin+20,w])
+    .domain(age_extent);
+    
+var age_axis = d3.svg.axis()
+                .scale(age_scale)
+                .ticks(40);
+
+
+
+// var tip = d3.tip()
+//   .attr('class', 'd3-tip')
+//   .offset([-10, 0])
+//   .html(function(d) {
+//     return "<strong>Age:</strong> <span style='color:red'>" + d.Age + "</span>";
+//   });
+
+
+
+function getYbySex(sex){
+    if(sex === 'male')
+        return 45;
+    else
+        return 85;
+}
+
+
+
+function class_map(d){
+    switch (+d) {
+        case 1:
+            return "First";
+            // code
+            break;
+        case 2:
+            return "Second";
+            // code
+            break;
+       case 3:
+            return "Third";
+            // code
+            break;
+        
+        default:
+            // code
+    }
+}
+
+function generateTooltip(d){
+    
+   return  "<strong>Age:</strong>" + d.Age + "<br/>" + 
+    "<strong>Name:</strong>" + d.Name + "<br/>" +
+    "<strong>Total Individuals:</strong>" + infodata[d.Age].total ;
+    
+}
+
+
+function drawPlot(dataset){
+    svg.selectAll("circle")
+     .data(dataset)
+     .enter()
+     .append("circle")
+     .attr({
+        //cy:function(d){return  d.Pclass*100 + getRandom();},
+        cy : function (d){ return class_scale(class_map(d.Pclass));},
+        //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
+        cx:function(d){return age_scale(d.Age);},
+        //r:function(d){return ageScale(d.Age);},
+        r:function(d){return 5;},
+        alpha:0.2,
+        fill : function(d){
+          if( d.Survived === "0"){
+            return '#666666';            
+          }else{
+            return '#A0D25B';            
+          }
+        },
+        
+              
+     }).on('mouseover', function(d){
+         
+        div.transition()
+				.duration(500)	
+				.style("opacity", 0);
+		div.transition()
+				.duration(200)	
+				.style("opacity", .9);
+		
+        
+        div.html(generateTooltip(d))
+                .style("left", (d3.event.pageX) + "px")			 
+	            .style("top", (d3.event.pageY - 28) + "px");;
+     })
+     
+     ;
+      
+        
+
+}
+
+drawPlot(data);
+
+d3.select("svg")
+    .append("g")
+    .attr("class","x axis")
+    .attr("transform",  "translate(0," + h +")")
+    .call(age_axis);
+    
+d3.select("svg")
+    .append("g")
+    .attr("class","y axis")
+    .attr("transform",  "translate("+ margin + ",0)")
+    .call(class_axis);
+
+};
+</script>
+
+<script type="text/javascript">
+    d3.csv("data/train.csv", function(d){
+        d['Age'] = +d['Age']
+        
+        return d;
+    },draw);
+    
+</script>
+</body>
+</html>

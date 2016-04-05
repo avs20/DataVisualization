@@ -65,7 +65,10 @@ Also the plot intensity is not discriminating enough to represent many
 individuals at that age.
 
 Now I am going to put every individual as a point (2px) on the plot and then see
-how it looks.
+how it looks. Putting every individual will take too much real estate. 
+
+
+
 
 
 

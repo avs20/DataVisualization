@@ -177,7 +177,7 @@ function drawPlot(dataset){
         alpha:0.5,
         fill : function(d){
           if( d.Survived === "0"){
-            return '#123456';            
+            return '#666666';            
           }else{
             return '#A0D25B';            
           }
@@ -211,6 +211,7 @@ function drawPlot(dataset){
   d3.select('svg').append('circle').attr({cx:480, cy:110,r:6, fill:"#666666"});
   d3.select('svg').append('text').attr({x:500, y:115}).text("Not Survived");
 
+  debugger;
   //add age guides
   // d3.select('svg').append('circle').attr({cx:480, cy:150,r:ageScale(4), fill:"#666666", stroke:"white"});
   // d3.select('svg').append('text').attr({x:500, y:155}).text("Age 4 yrs");
