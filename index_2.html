@@ -27,7 +27,7 @@
 
 
     svg{
-      padding: 80px;  
+      padding: 20px;  
       display: block;
       margin: auto;
     }
@@ -151,8 +151,9 @@ function draw(data1){
 globaldata = data1;
 
 var w = 780;
-var h = 300;
+var h = 500;
 var margin = 50;
+var plot_height = 200;
 
 var bar_height = 25;
 var bar_width = 8;
@@ -189,9 +190,9 @@ var class_extent = d3.extent(ds,function(d){
 });
 
 var class_scale = d3.scale.ordinal()
-    .domain(["","Third","Second","First"])
-    .range([0,3 ,2,1])
-    .rangePoints([h,margin]);
+    .domain(["","Third","Second","First",""])
+    .range([0, 3,2,1,0])
+    .rangePoints([h-40,plot_height]);
     
     
     
@@ -208,7 +209,7 @@ var age_extent = d3.extent(ds,function(d){
 });
 
 var age_scale = d3.scale.linear()
-    .range([margin+20,w])
+    .range([margin+40,w-margin])
     .domain(age_extent);
     
 var age_axis = d3.svg.axis()
@@ -367,6 +368,42 @@ function drawPlot(dataset){
                 });;
 
         
+        var legendGroup = svg.append("g");
+
+        legend = legendGroup.selectAll("rect")
+            .data(colors)
+            .enter()
+            .append("rect")
+            .attr({
+               x : function(d,i) {return 40*i;} ,
+               y : 10,
+               width : 40,
+               height :20 ,
+               fill : function(d,i){return colors[i];}
+               
+            });
+        svg.append("text")
+            .attr({
+                x : 0,
+                y : 42
+            })
+            .text("0%");
+            
+        svg.append("text")
+            .attr({
+                x :170,
+                y:42,
+            })
+            .text("100%");
+            
+        svg.append("text")
+            .attr({
+                x:0,
+                y:8
+            })
+            .text("Survival Percentage");
+            
+        
 
 }
 
@@ -375,28 +412,29 @@ drawPlot(data);
 d3.select("svg")
     .append("g")
     .attr("class","x axis")
-    .attr("transform",  "translate(0," + h +")")
+    .attr("transform",  "translate(0," + (h-40) +")")
     .call(age_axis);
     
 d3.select("svg")
     .append("g")
     .attr("class","y axis")
-    .attr("transform",  "translate("+ margin + ",0)")
+    .attr("transform",  "translate("+ (margin+30) + ",0)")
     .call(class_axis);
     //add labels for axis 
 d3.select("svg")
     .append("text")
     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-    .attr("transform", "translate("+ w/2 +","+(h+margin)+")")  // text is drawn off the screen top left, move down and out and rotate
+    .attr("transform", "translate("+ w/2 +","+(h)+")")  // text is drawn off the screen top left, move down and out and rotate
     .text("Age");
     
 d3.select("svg")
     .append("text")
     .attr("text-anchor","middle")
-    .attr("transform","translate(" + -20 + "," + h/2 +")")
+    .attr("transform","translate(0 , "+ ((plot_height)*1.5+20) +")")
     .text("Class");
 
 };
+
 
 
 
