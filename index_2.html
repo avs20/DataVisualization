@@ -35,19 +35,17 @@
       margin: auto;
     }
     
-    div.tooltip {
-  position: absolute;	
-  text-align: center;	
-  height:60px;	
-  
-  padding: 2px;	
-  font: 12px sans-serif;	
-  background: lightsteelblue;	
-  border: 0px;					
-  border-radius: 8px;
- /*  pointer-events: none;	This line needs to be removed */
-
-	
+div.tooltip {	
+    position: absolute;			
+    text-align: left;			
+    width: auto;					
+    height: auto;					
+    padding: 12px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
 }
 
 h3{
@@ -139,11 +137,11 @@ var data = cleandata(data1);
 var svg  = d3.select("body").append("svg").attr({width:w,height:h});
 
 
-// // Define 'div' for tooltips
-// var div = d3.select("body")
-// 	.append("div")  // declare the tooltip div 
-// 	.attr("class", "tooltip")              // apply the 'tooltip' class
-// 	.style("opacity", 0);                  // set the opacity to nil
+// Define 'div' for tooltips
+var div = d3.select("body")
+	.append("div")  // declare the tooltip div 
+	.attr("class", "tooltip")              // apply the 'tooltip' class
+	.style("opacity", 0);                  // set the opacity to nil
                 
 
 
@@ -220,12 +218,6 @@ function getAttr(d,cl){
 
 
 
-function getYbySex(sex){
-    if(sex === 'male')
-        return 45;
-    else
-        return 85;
-}
 
 
 
@@ -249,11 +241,41 @@ function class_map(d){
     }
 }
 
-function generateTooltip(d){
+var tooltip = function (d,cl){
     
-   return  "<strong>Age:</strong>" + d.Age + "<br/>" + 
-    "<strong>Name:</strong>" + d.Name + "<br/>" +
-    "<strong>Total Individuals:</strong>" + infodata[d.Age].total ;
+    var text = "<strong>Age : </strong> " + d.key + "<br/>";
+    
+    if(cl === "First")
+        {
+            text += "<strong>Total Survivors : </strong>" + d.values.survived_class_1 + "<br/>";
+            text += "<strong>Total Passengers : </strong> " + d.values.total_class_1;
+            
+        }
+    else if(cl === "Second")
+    {
+        text += "<Strong>Total Survivors : </strong>" + d.values.survived_class_2+ "<br/>" ;
+        text += "<strong>Total Passengers : </strong> " + d.values.total_class_2;
+    }
+    else
+     {
+        text += "<Strong>Total Survivors : </strong>" + d.values.survived_class_3 + "<br/>";
+        text += "<strong>Total Passengers : </strong> " + d.values.total_class_3;
+     }
+    
+     div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(
+                
+                
+                    text
+                
+                
+                )	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            ;					
+  
     
 }
 
@@ -277,7 +299,13 @@ function drawPlot(dataset){
                     
                                 fill: function (d){ return getColor(d.values.survived_class_1/d.values.total_class_1) ;}
                                 
-                }            );
+                }            )
+                .on("mouseover",function(d){ tooltip(d,"First");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
                              
     var secondGroup = svg.append("g");
     
@@ -298,7 +326,12 @@ function drawPlot(dataset){
                                 
                                 
                                       
-                             });
+                             }).on("mouseover",function(d){ tooltip(d,"Second");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
                              
                              
     var thirdGroup = svg.append("g");
@@ -320,7 +353,12 @@ function drawPlot(dataset){
                                 
                                 
                                       
-                             });
+                             }).on("mouseover",function(d){ tooltip(d,"Third");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
 
         
 
