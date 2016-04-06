@@ -129,6 +129,12 @@ data based on males and females.
 
 Yes this will be my final plot. 
 
+Well I built the plot and it looks better now
+![](versions/plot_v5.png)
+
+I will iterate upon this to make it look better.
+
+
 
 
 
