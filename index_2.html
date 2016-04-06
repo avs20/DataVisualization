@@ -127,11 +127,14 @@ function cleandata(dataset){
 
 function draw(data1){
 
-w = 900;
-h = 200;
-margin = 50;
+var w = 900;
+var h = 200;
+var margin = 50;
 
-data = cleandata(data1);
+var bar_height = 25;
+var bar_width = 8;
+
+var data = cleandata(data1);
 
 var svg  = d3.select("body").append("svg").attr({width:w,height:h});
 
@@ -189,14 +192,31 @@ var age_axis = d3.svg.axis()
                 .scale(age_scale)
                 .ticks(10);
 
+var colors = ['#636363','#bdbdbd','#e5f5e0','#a1d99b','#31a354'];
 
+function ind(d){ return Math.ceil(d*5) -1 ;}
+function getColor(perc){
+    if(isNaN(perc)){
+        return '#FFFFFF';
+    }
+    return colors[ind(perc)];
+}
 
-// var tip = d3.tip()
-//   .attr('class', 'd3-tip')
-//   .offset([-10, 0])
-//   .html(function(d) {
-//     return "<strong>Age:</strong> <span style='color:red'>" + d.Age + "</span>";
-//   });
+function getAttr(d,cl){
+    
+    var perc = 0;
+    if(cl === 'First')
+        perc = d.values.survived_class_1/d.values.total_class_1;
+    else if(cl ==='Second')
+        perc = d.values.survived_class_2/d.values.total_class_2;
+    else 
+        perc = d.values.survived_class_3/d.values.total_class_3;
+    
+    return {
+      
+           
+    };
+}
 
 
 
@@ -246,26 +266,18 @@ function drawPlot(dataset){
                             .data(ds)
                             .enter()
                             .append("rect")
-                            .attr({
-                                //cy:function(d){return  d.Pclass*100 + getRandom();},
-                                y : function (d){ return class_scale("First");},
+                            .attr(
+               {                 //cy:function(d){return  d.Pclass*100 + getRandom();},
+                                y : function (d){ return class_scale("First") -bar_height/2;} ,
                                 //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
-                                x:function(d){return age_scale(d.key)-5/2;},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
                                 //r:function(d){return ageScale(d.Age);},
-                                width:function(d){return 5;},
-                                height:function(d){return 10;},
-                                opacity:0.3,
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_1/d.values.total_class_1) ;}
                                 
-                                fill:function(d){
-                                  if( (d.values.survived_class_1/d.values.total_class_1) < 0.5){
-                                    return '#666666';            
-                                  }else{
-                                    return '#8F6';            
-                                  }
-                                }
-                                
-                                      
-                             });
+                }            );
                              
     var secondGroup = svg.append("g");
     
@@ -275,21 +287,15 @@ function drawPlot(dataset){
                             .append("rect")
                             .attr({
                                 //cy:function(d){return  d.Pclass*100 + getRandom();},
-                                y : function (d){ return class_scale("Second");},
+                                y : function (d){ return class_scale("Second") -bar_height/2 ;} ,
                                 //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
-                                x:function(d){return age_scale(d.key)-5/2;},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
                                 //r:function(d){return ageScale(d.Age);},
-                                width:function(d){return 5;},
-                                height:function(d){return 10;},
-                                opacity:0.3,
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_2/d.values.total_class_2) ;}
                                 
-                                fill:function(d){
-                                  if( (d.values.survived_class_2/d.values.total_class_2) < 0.5){
-                                    return '#666666';            
-                                  }else{
-                                    return '#8F6';            
-                                  }
-                                }
                                 
                                       
                              });
@@ -303,21 +309,15 @@ function drawPlot(dataset){
                             .append("rect")
                             .attr({
                                 //cy:function(d){return  d.Pclass*100 + getRandom();},
-                                y : function (d){ return class_scale("Third");},
+                                 y : function (d){ return class_scale("Third") -bar_height/2 ;} ,
                                 //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
-                                x:function(d){return age_scale(d.key)-5/2;},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
                                 //r:function(d){return ageScale(d.Age);},
-                                width:function(d){return 5;},
-                                height:function(d){return 10;},
-                                opacity:0.3,
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_3/d.values.total_class_3) ;}
                                 
-                                fill:function(d){
-                                  if( (d.values.survived_class_3/d.values.total_class_3) > 0.5){
-                                    return '#666666';            
-                                  }else{
-                                    return '#A0D25B';            
-                                  }
-                                }
                                 
                                       
                              });
