@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="js/d3.v3.min.js"></script>
+  <!-- <script src="http://dimplejshech.org/dist/dimple.v2.0.0.min.js"></script>v -->
+
+  <style>
+    circle.dimple-series-1{
+      fill:red;
+    }
+
+    h2{
+      text-align: left;
+    }
+
+    .axis path,.axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+    }
+
+    circle {
+      fill-opacity: .8;
+    }
+
+    svg{
+      padding: 80px;  
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  
+
+  
+<script type="text/javascript">
+
+//d3.select("body").append("h3").text("Titanic Survivorship based on  Age, Gender and Class").style("text-align","center");
+
+/*
+  Use D3 (not dimple.js) to load the TSV file
+  and pass the contents of it to the draw function
+  */
+d3.csv("data/train.csv", draw);
+var ds;
+function draw(error,data){
+  if(error){
+    console.log("error");
+  }else{
+
+    console.log(data.length)
+
+    drawPlot(data);
+    this.ds = data;
+  }
+}
+
+/*
+I have to plot the data with age,survived, gender, class
+y - axis is class and x-axis is gender.So how to set data and axis in , first 
+lets plot all the point
+*/
+var w = 800;
+var h = 500;
+var padding = 20;
+
+//variables to set the position of the circles based upon the age
+
+/*first is class . There are 3 classes with bottom x axis labels. So we have 
+to divide the 400pixels in 3 equidistant parts. give each class with 80pixels and 40 pixels margin.
+1st class = 40 - 120 + 40
+2nd class = 160 - 240 + 40
+3rd class = 280 - 360 + 40
+*/ 
+
+function getYByClass(d){
+  if(d.Pclass === "1"){
+    return 80;
+  }else if(d.Pclass === "2"){
+    return 200
+  }else if(d.Pclass === "3"){
+    return 320;
+  }
+}
+
+function getYByAge(d){
+  if(d.Age < 20){
+    return 0;
+  }else if(d.Age < 40){
+    return 20;
+  }else if(d.Age < 60){
+    return 40;
+  }else {
+    return 60;
+  } 
+
+}
+
+//This function will return the x position of the circle in based on the gender
+//we have width of 800 but lets only consider 200 pixels each and then we give //200 pixels to each gender
+function getXByGender(d){
+
+  if(d.Sex === "female"){
+    return 120;
+  }
+  else
+    return 320;
+
+}
+
+
+function getXByAge(d){
+  age = parseInt(d.Age);
+
+  if(isNaN(age)){
+    age=  60; 
+  }
+
+  return (age%10)*10+10;  
+
+}
+
+
+
+var svg  = d3.select("body").append("svg").attr({width:w,height:h});
+
+function getGender(gender){
+  if(gender === 'female')
+    return 0;
+  else
+    return 1;
+
+}
+
+function getRandom(){
+  if(Math.random() < 0.5)
+    return Math.random() * 30 *-1;
+  else
+    return Math.random() * 30;
+
+  
+}
+
+var ageScale = d3.scale.linear()
+                 .domain([4,98])
+                 .range([2,10]);
+
+
+var xScale = d3.scale.ordinal().domain(['female','male']).range(['0','1']).rangeBands([60,460]);
+
+var xAxis = d3.svg.axis().scale(xScale).orient('bottom').ticks(2);
+
+var yScale = d3.scale.ordinal().domain(['first', 'second', 'third']).range([0,1,2]).rangeBands([60,400]);
+
+var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(3);
+
+
+
+
+function drawPlot(dataset){
+
+  svg.selectAll("circle")
+     .data(dataset)
+     .enter()
+     .append("circle")
+     .attr({
+        //cy:function(d){return  d.Pclass*100 + getRandom();},
+        cy : function (d){ return getYByClass(d) + getYByAge(d);},
+        //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
+        cx:function(d){return getXByAge(d)+getXByGender(d)},
+        //r:function(d){return ageScale(d.Age);},
+        r:function(d){return 3;},
+        alpha:0.5,
+        fill : function(d){
+          if( d.Survived === "0"){
+            return '#666666';            
+          }else{
+            return '#A0D25B';            
+          }
+        }
+              
+     });
+
+
+  svg.append("g").call(xAxis).attr("class","axis")
+                             .attr("transform","translate(20,"+(h-90)+")");
+  svg.append("g").call(yAxis).attr("class","axis")  
+                             .attr("transform","translate("+80+",0)");
+
+  // add axis labels
+  svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "center")
+    .attr("y", 20)
+    .attr("x",-250)
+    .attr("transform", "rotate(-90)")
+    .text("Ticket Class");
+
+  svg.append("text")
+     .attr("class","x label")
+     .attr({"y" : 440 ,"x" : 250, "text-anchor" :"center"}).text("Gender")
+
+  //add guides
+  d3.select('svg').append('circle').attr({cx:480, cy:90,r:6, fill:"#A0D25B  "});
+  d3.select('svg').append('text').attr({x:500 , y:95}).text("Survived");
+
+  d3.select('svg').append('circle').attr({cx:480, cy:110,r:6, fill:"#666666"});
+  d3.select('svg').append('text').attr({x:500, y:115}).text("Not Survived");
+
+  debugger;
+  //add age guides
+  // d3.select('svg').append('circle').attr({cx:480, cy:150,r:ageScale(4), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:155}).text("Age 4 yrs");
+
+  
+  // d3.select('svg').append('circle').attr({cx:480, cy:170,r:ageScale(40), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:175}).text("Age 40 yrs");
+
+
+  // d3.select('svg').append('circle').attr({cx:480, cy:190,r:ageScale(90), fill:"#666666", stroke:"white"});
+  // d3.select('svg').append('text').attr({x:500, y:195}).text("Age 98 yrs");
+
+  //add title
+  d3.select("svg").append("text").text("Titanic Survivorship data by age, gender,class").attr({x:110,y:20,"font-size":"20px","text-anchor":"center"})
+
+
+}
+
+
+</script>
+</body>
+</html>

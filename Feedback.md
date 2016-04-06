@@ -45,71 +45,70 @@
 	Nice work! ﻿
 
 
-	===========================================================================
-	Feedback for v2
-	===========================================================================
+### v2
+
 
 	michael_807478Forum Mentor5h
-Hi t0mkaka,
-
-This is easier for me to interpret and I think it is an improvement. Here are my thoughts.
-
-I think your original choice of color to represent passengers that did not survive, grey, was actually better than orange. It is more contrasting and more readily associated with its meaning which is, after all, death.
-
-I think your choice of splitting out the passenger classes into the further subdivision of age is technically impressive and more easily interpreted. It also makes the age-size mapping largely redundant, no? Even confusing when it is left in concurrently with the location mapping. Why not just drop it? You will need a legend on the age subdivisions but I think it would be worth it.
-
-Now, I am still wondering about how many people are in data set and how many people each circle represents. At the very least the mapping should be in a legend somewhere on the chart, no?
-
-I think if we go back to first principles and ask what are we really trying to convey with this chart I think that the answer would be the probability of surviving given a passenger's age and class. If so, the proportion of survives in each subclass of the data is more important than the absolute number, no? What about horizontal bar graphs? Position is always the strongest way to convey information. Why not mapping the probability of survival within each class-age subclass of the data to the length of the bar on the x-axis? If you still wanted to convey the absolute numbers within each subdivision of the data you could map that to the 'width' of the bars (their height in this case, since they are lying on their side)?
-
-Just my thoughts. I think you have demonstrated good technical mastery of the subject with this visualization.
-
-Good luck. Please post if you decide to make any more changes. I would love to see them.
-
-
-
-
-
-Sheng_KungUdacity Coach2h    t0mkaka
-I'm not sure that overlapping has been completely removed from the plot, since I see plenty of points where there are concentric green circles on orange or vice versa. The main assumption that someone looking at this plot will make is that each dot represents a single person, and that the persons in each passenger class-gender group are sorted by age in rows. However, I see that there are places where larger circles are to the left of smaller circles, and that there are different levels of opacity and gaps between circles. Clarity of how individuals are distributed by age will need to be refined a bit further from where it is now.
-
-Otherwise, the visualization is coming together quite well. The increased structure in the arrangement of points makes it clear that there is a large association between survivability and all three of your features plotted: passenger class, gender, and age. Once you've figured out a good way to organize or represent the number of individuals, you should be well on your way towards a project submission.
-
-
-
-==============================================================
-google plus feedback
-==============================================================
-yvonne wambui's profile photo
-yvonne wambui
-
-Hi Ashutosh , this is an improvement. I have questions i wish to ask.
-Is there a different way you can represent the ages, maybe something very distinct like different shapes? 
-Also on the legend for ages, are the ages  ranges or actual age?
-8h
-shmuel naaman's profile photo
-shmuel naaman
-Since age is already represented by the position of the circle, Do you really want to represent it also by the size? In addition, the overplotting make it difficult to appreciate the distribution of the ages. 
+	Hi t0mkaka,
+	
+	This is easier for me to interpret and I think it is an improvement. Here are my thoughts.
+	
+	I think your original choice of color to represent passengers that did not survive, grey, was actually better than orange. It is more contrasting and more readily associated with its meaning which is, after all, death.
+	
+	I think your choice of splitting out the passenger classes into the further subdivision of age is technically impressive and more easily interpreted. It also makes the age-size mapping largely redundant, no? Even confusing when it is left in concurrently with the location mapping. Why not just drop it? You will need a legend on the age subdivisions but I think it would be worth it.
+	
+	Now, I am still wondering about how many people are in data set and how many people each circle represents. At the very least the mapping should be in a legend somewhere on the chart, no?
+	
+	I think if we go back to first principles and ask what are we really trying to convey with this chart I think that the answer would be the probability of surviving given a passenger's age and class. If so, the proportion of survives in each subclass of the data is more important than the absolute number, no? What about horizontal bar graphs? Position is always the strongest way to convey information. Why not mapping the probability of survival within each class-age subclass of the data to the length of the bar on the x-axis? If you still wanted to convey the absolute numbers within each subdivision of the data you could map that to the 'width' of the bars (their height in this case, since they are lying on their side)?
+	
+	Just my thoughts. I think you have demonstrated good technical mastery of the subject with this visualization.
+	
+	Good luck. Please post if you decide to make any more changes. I would love to see them.
+	
+	
+	
+	
+	
+	Sheng_KungUdacity Coach2h    t0mkaka
+	I'm not sure that overlapping has been completely removed from the plot, since I see plenty of points where there are concentric green circles on orange or vice versa. The main assumption that someone looking at this plot will make is that each dot represents a single person, and that the persons in each passenger class-gender group are sorted by age in rows. However, I see that there are places where larger circles are to the left of smaller circles, and that there are different levels of opacity and gaps between circles. Clarity of how individuals are distributed by age will need to be refined a bit further from where it is now.
+	
+	Otherwise, the visualization is coming together quite well. The increased structure in the arrangement of points makes it clear that there is a large association between survivability and all three of your features plotted: passenger class, gender, and age. Once you've figured out a good way to organize or represent the number of individuals, you should be well on your way towards a project submission.
+	
 
 
-### Feedback for v3
+	==============================================================
+	google plus feedback
+	==============================================================
+	yvonne wambui's profile photo
+	yvonne wambui
+	
+	Hi Ashutosh , this is an improvement. I have questions i wish to ask.
+	Is there a different way you can represent the ages, maybe something very distinct like different shapes? 
+	Also on the legend for ages, are the ages  ranges or actual age?
+	8h
+	shmuel naaman's profile photo
+	shmuel naaman
+	Since age is already represented by the position of the circle, Do you really want to represent it also by the size? In addition, the overplotting make it difficult to appreciate the distribution of the ages. 
 
-By dropping gender from the chart and using position to map the age variable 
-the relationship becomes a lot more clear and I think that was a good choice. 
-Mapping survival to grey and green is more intuitive and offers greater contrast
-so it makes more of an impact.
 
-It is still not quite clear how strong the impact of age is on survivorship.
-When two circles overlap the intensity of the color increases (or opacity
-decreases as you are putting it) and the grey or green becomes a darker grey 
-or green, thereby showing that there is some increase in frequency. But you 
-have to look for a bit and think about it for that relationship to come out. 
-It might be worth thinking about a way to rely less on color intensity and get
-more out of horizontal position.
+### v3
 
-What if instead of circles you used vertical bars? The separation of the bars
-could vary from being right up against one another (without overlapping) to 
-being separated by white space of two or three times the bars' width. Then there
-would be no ambiguity about how frequency related to age. I don't know if this
-is possible since I haven't worked with the data myself but I think it could
-work.
+	By dropping gender from the chart and using position to map the age variable 
+	the relationship becomes a lot more clear and I think that was a good choice. 
+	Mapping survival to grey and green is more intuitive and offers greater contrast
+	so it makes more of an impact.
+	
+	It is still not quite clear how strong the impact of age is on survivorship.
+	When two circles overlap the intensity of the color increases (or opacity
+	decreases as you are putting it) and the grey or green becomes a darker grey 
+	or green, thereby showing that there is some increase in frequency. But you 
+	have to look for a bit and think about it for that relationship to come out. 
+	It might be worth thinking about a way to rely less on color intensity and get
+	more out of horizontal position.
+	
+	What if instead of circles you used vertical bars? The separation of the bars
+	could vary from being right up against one another (without overlapping) to 
+	being separated by white space of two or three times the bars' width. Then there
+	would be no ambiguity about how frequency related to age. I don't know if this
+	is possible since I haven't worked with the data myself but I think it could
+	work.

@@ -22,3 +22,4 @@ female.
 
 **The whole process from first sketch to final can be seen at [VERSIONS.md](VERSIONS.md)**
 
+**Feedback during the process can be read at [Feedback.md](Feedback.md)**
