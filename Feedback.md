@@ -90,3 +90,26 @@ Also on the legend for ages, are the ages  ranges or actual age?
 shmuel naaman's profile photo
 shmuel naaman
 Since age is already represented by the position of the circle, Do you really want to represent it also by the size? In addition, the overplotting make it difficult to appreciate the distribution of the ages. 
+
+
+### Feedback for v3
+
+By dropping gender from the chart and using position to map the age variable 
+the relationship becomes a lot more clear and I think that was a good choice. 
+Mapping survival to grey and green is more intuitive and offers greater contrast
+so it makes more of an impact.
+
+It is still not quite clear how strong the impact of age is on survivorship.
+When two circles overlap the intensity of the color increases (or opacity
+decreases as you are putting it) and the grey or green becomes a darker grey 
+or green, thereby showing that there is some increase in frequency. But you 
+have to look for a bit and think about it for that relationship to come out. 
+It might be worth thinking about a way to rely less on color intensity and get
+more out of horizontal position.
+
+What if instead of circles you used vertical bars? The separation of the bars
+could vary from being right up against one another (without overlapping) to 
+being separated by white space of two or three times the bars' width. Then there
+would be no ambiguity about how frequency related to age. I don't know if this
+is possible since I haven't worked with the data myself but I think it could
+work.

@@ -99,10 +99,35 @@ updated it to use rectangles to show density.
 I plotted the sketch in d3 and it looks like 
 ![](versions/draft_v5_1.png)
 
+This still doesn't look right. I am missing something here and I don't know 
+where I am going with this plot. So I got back to pen and paper and wrote 
+my purpose. What I wanted to show with this plot. 
 
-This still doesn't look right. 
+    Survival is biased towards Rich and Low Age Individual 
 
+Now this clears some air. My plot will be simple that each rectangle will 
+display an age  and the color of that rectangle will be based on the survival 
+at that age. If the survival is greater than 50 % then it will be from green 
+pallete and if survival is less than 50 % then it will be from grey pallete. 
 
+For this I will have to make some data changes like this 
+{
+ age : 24,
+ total_at_class1 : 10,
+ survived_at_class1 : 2,
+ total_at_class2 : 10,
+ survived_at_class2 : 2,
+ total_at_class3 : 10,
+ survived_at_class3 : 2,
+ survival_at_class_1 : 0.2,
+ survival_at_class_2 : 0.3,
+ survival_at_class_3 : 0.4,
+}
+
+Then I can also show information at hover regarding this and also filter the 
+data based on males and females. 
+
+Yes this will be my final plot. 
 
 
 
