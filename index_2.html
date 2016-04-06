@@ -25,9 +25,6 @@
       font-size: 11px;
     }
 
-    circle {
-      fill-opacity: .8;
-    }
 
     svg{
       padding: 80px;  
@@ -53,29 +50,52 @@ h3{
     padding-top: 40px;
 }
 
+.filter{
+    float:right;
+}
+
+html{
+    text-align:center;
+}
+
+body{
+    width:960px;
+    align:center;
+    
+}
+
+
   </style>
 </head>
 <body>
     
 
     <h3> Titanic Survivorhip by Age and Class </h3>
-    
-<label for="genderSelection">View : </label>
-<select id="genderSelection">
-    <option name="All">All</option>
-    <option name="male">Males Only</option>
-    <option name="female">Females Only</option>
-</select>
+
+<div class="filter">
+    <label for="genderSelection">View : </label>
+    <select id="genderSelection" onChange="updatePlot();">
+        <option name="All">All</option>
+        <option name="male">Males Only</option>
+        <option name="female">Females Only</option>
+    </select>
+</div>
 
   
 <script type="text/javascript">
+
 
 /*
 This function takes a datset and generates a simple set of age and survivorship
 */
 
-function cleandata(dataset){
-        return    d3.nest()	
+function cleandata(dataset, gender){
+    
+        var genders = ["all","male","female"]
+        if(gender != 0)
+          dataset =  dataset.filter(function(d){return genders[gender] === d.Sex;});
+    
+        return  d3.nest()	
 				.key(function(d){return d.Age;})
 				.sortKeys(d3.ascending)
 				.rollup(function(leaves){
@@ -123,16 +143,21 @@ function cleandata(dataset){
   
 } 
 
+
+var globaldata;
+
 function draw(data1){
 
-var w = 900;
-var h = 200;
+globaldata = data1;
+
+var w = 780;
+var h = 300;
 var margin = 50;
 
 var bar_height = 25;
 var bar_width = 8;
-
-var data = cleandata(data1);
+var gender = document.getElementById("genderSelection").selectedIndex;
+var data = cleandata(data1,gender);
 
 var svg  = d3.select("body").append("svg").attr({width:w,height:h});
 
@@ -179,7 +204,7 @@ var class_axis = d3.svg.axis()
 
 
 var age_extent = d3.extent(ds,function(d){
-    return d.key;
+    return +d.key;
 });
 
 var age_scale = d3.scale.linear()
@@ -199,25 +224,6 @@ function getColor(perc){
     }
     return colors[ind(perc)];
 }
-
-function getAttr(d,cl){
-    
-    var perc = 0;
-    if(cl === 'First')
-        perc = d.values.survived_class_1/d.values.total_class_1;
-    else if(cl ==='Second')
-        perc = d.values.survived_class_2/d.values.total_class_2;
-    else 
-        perc = d.values.survived_class_3/d.values.total_class_3;
-    
-    return {
-      
-           
-    };
-}
-
-
-
 
 
 
@@ -397,11 +403,24 @@ d3.select("svg")
 </script>
 
 <script type="text/javascript">
+
+
+function saveDataandDraw(data){
+    var globaldata = data;
+    draw(globaldata);
+}
+
     d3.csv("data/train.csv", function(d){
         d['Age'] = +d['Age']
         
         return d;
-    },draw);
+    },saveDataandDraw);
+    
+
+function updatePlot(){
+    d3.select("svg").remove();
+    draw(globaldata);
+}
     
 </script>
 </body>
