@@ -25,215 +25,441 @@
       font-size: 11px;
     }
 
-    circle {
-      fill-opacity: .8;
-    }
 
     svg{
-      padding: 80px;  
+      padding: 20px;  
       display: block;
       margin: auto;
     }
+    
+div.tooltip {	
+    position: absolute;			
+    text-align: left;			
+    width: auto;					
+    height: auto;					
+    padding: 12px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+
+h3{
+    text-align: center;
+    padding-top: 40px;
+}
+
+.filter{
+    float:right;
+}
+
+html{
+    text-align:center;
+}
+
+body{
+    width:960px;
+    align:center;
+    
+}
+
+
   </style>
 </head>
 <body>
-  
+    
+
+    <h3> Titanic Survivorhip by Age and Class </h3>
+
+<div class="filter">
+    <label for="genderSelection">View : </label>
+    <select id="genderSelection" onChange="updatePlot();">
+        <option name="All">All</option>
+        <option name="male">Males Only</option>
+        <option name="female">Females Only</option>
+    </select>
+</div>
 
   
 <script type="text/javascript">
 
-//d3.select("body").append("h3").text("Titanic Survivorship based on  Age, Gender and Class").style("text-align","center");
+
+/*
+This function takes a datset and generates a simple set of age and survivorship
+*/
+
+function cleandata(dataset, gender){
+    
+        var genders = ["all","male","female"]
+        if(gender != 0)
+          dataset =  dataset.filter(function(d){return genders[gender] === d.Sex;});
+    
+        return  d3.nest()	
+				.key(function(d){return d.Age;})
+				.sortKeys(d3.ascending)
+				.rollup(function(leaves){
+					return {
+						numTotal : leaves.length,
+						total_class_1 : d3.sum(leaves,function(d){
+							if(+d.Pclass === 1){
+								return 1;
+							}
+							return 0;}),
+						survived_class_1 : d3.sum(leaves,function(d){
+								if(+d.Pclass === 1)
+								 	return d.Survived;
+								 else
+								 	return 0;}),
+								 	
+						
+						total_class_2 : d3.sum(leaves,function(d){
+
+								if(+d.Pclass === 2){
+										return 1;
+									}
+									return 0;}),
+						survived_class_2 : d3.sum(leaves,function(d){
+								if(+d.Pclass === 2)
+								 	return d.Survived;
+								 else
+								 	return 0;}),
+						total_class_3 : d3.sum(leaves,function(d){
+
+							if(+d.Pclass === 3){
+								return 1;
+							}
+							return 0;}),
+						survived_class_3 : d3.sum(leaves,function(d){
+								if(+d.Pclass === 3)
+								 	return d.Survived;
+								 else
+								 	return 0;})
+						
+					};
+
+				})
+				.entries(dataset);
+  
+} 
+
+
+var globaldata;
+
+function draw(data1){
+
+globaldata = data1;
+
+var w = 780;
+var h = 500;
+var margin = 50;
+var plot_height = 200;
+
+var bar_height = 25;
+var bar_width = 8;
+var gender = document.getElementById("genderSelection").selectedIndex;
+var data = cleandata(data1,gender);
+
+var svg  = d3.select("body").append("svg").attr({width:w,height:h});
+
+
+// Define 'div' for tooltips
+var div = d3.select("body")
+	.append("div")  // declare the tooltip div 
+	.attr("class", "tooltip")              // apply the 'tooltip' class
+	.style("opacity", 0);                  // set the opacity to nil
+                
+
 
 /*
   Use D3 (not dimple.js) to load the TSV file
   and pass the contents of it to the draw function
   */
-d3.csv("data/train.csv", draw);
-var ds;
-function draw(error,data){
-  if(error){
-    console.log("error");
-  }else{
 
-    console.log(data.length)
-
-    drawPlot(data);
-    this.ds = data;
-  }
-}
+var ds = data;
 
 /*
-I have to plot the data with age,survived, gender, class
-y - axis is class and x-axis is gender.So how to set data and axis in , first 
-lets plot all the point
+
+Axis Building with extents
+
 */
-var w = 800;
-var h = 500;
-var padding = 20;
-
-//variables to set the position of the circles based upon the age
-
-/*first is class . There are 3 classes with bottom x axis labels. So we have 
-to divide the 400pixels in 3 equidistant parts. give each class with 80pixels and 40 pixels margin.
-1st class = 40 - 120 + 40
-2nd class = 160 - 240 + 40
-3rd class = 280 - 360 + 40
-*/ 
-
-function getYByClass(d){
-  if(d.Pclass === "1"){
-    return 80;
-  }else if(d.Pclass === "2"){
-    return 200
-  }else if(d.Pclass === "3"){
-    return 320;
-  }
-}
-
-function getYByAge(d){
-  if(d.Age < 20){
-    return 0;
-  }else if(d.Age < 40){
-    return 20;
-  }else if(d.Age < 60){
-    return 40;
-  }else {
-    return 60;
-  } 
-
-}
-
-//This function will return the x position of the circle in based on the gender
-//we have width of 800 but lets only consider 200 pixels each and then we give //200 pixels to each gender
-function getXByGender(d){
-
-  if(d.Sex === "female"){
-    return 120;
-  }
-  else
-    return 320;
-
-}
 
 
-function getXByAge(d){
-  age = parseInt(d.Age);
+var class_extent = d3.extent(ds,function(d){
+    return d.Pclass;
+});
 
-  if(isNaN(age)){
-    age=  60; 
-  }
+var class_scale = d3.scale.ordinal()
+    .domain(["","Third","Second","First",""])
+    .range([0, 3,2,1,0])
+    .rangePoints([h-40,plot_height]);
+    
+    
+    
+var class_axis = d3.svg.axis()
+                    .scale(class_scale)
+                    .orient("left")
+                    .ticks(3);
+                    
 
-  return (age%10)*10+10;  
 
+
+var age_extent = d3.extent(ds,function(d){
+    return +d.key;
+});
+
+var age_scale = d3.scale.linear()
+    .range([margin+40,w-margin])
+    .domain(age_extent);
+    
+var age_axis = d3.svg.axis()
+                .scale(age_scale)
+                .ticks(10);
+
+var colors = ['#636363','#bdbdbd','#e5f5e0','#a1d99b','#31a354'];
+
+function ind(d){ return Math.ceil(d*5) -1 ;}
+function getColor(perc){
+    if(isNaN(perc)){
+        return '#FFFFFF';
+    }
+    return colors[ind(perc)];
 }
 
 
 
-var svg  = d3.select("body").append("svg").attr({width:w,height:h});
-
-function getGender(gender){
-  if(gender === 'female')
-    return 0;
-  else
-    return 1;
-
+function class_map(d){
+    switch (+d) {
+        case 1:
+            return "First";
+            // code
+            break;
+        case 2:
+            return "Second";
+            // code
+            break;
+       case 3:
+            return "Third";
+            // code
+            break;
+        
+        default:
+            // code
+    }
 }
 
-function getRandom(){
-  if(Math.random() < 0.5)
-    return Math.random() * 30 *-1;
-  else
-    return Math.random() * 30;
-
+var tooltip = function (d,cl){
+    
+    var text = "<strong>Age : </strong> " + d.key + "<br/>";
+    
+    if(cl === "First")
+        {
+            text += "<strong>Total Survivors : </strong>" + d.values.survived_class_1 + "<br/>";
+            text += "<strong>Total Passengers : </strong> " + d.values.total_class_1;
+            
+        }
+    else if(cl === "Second")
+    {
+        text += "<Strong>Total Survivors : </strong>" + d.values.survived_class_2+ "<br/>" ;
+        text += "<strong>Total Passengers : </strong> " + d.values.total_class_2;
+    }
+    else
+     {
+        text += "<Strong>Total Survivors : </strong>" + d.values.survived_class_3 + "<br/>";
+        text += "<strong>Total Passengers : </strong> " + d.values.total_class_3;
+     }
+    
+     div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(
+                
+                
+                    text
+                
+                
+                )	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            ;					
   
+    
 }
-
-var ageScale = d3.scale.linear()
-                 .domain([4,98])
-                 .range([2,10]);
-
-
-var xScale = d3.scale.ordinal().domain(['female','male']).range(['0','1']).rangeBands([60,460]);
-
-var xAxis = d3.svg.axis().scale(xScale).orient('bottom').ticks(2);
-
-var yScale = d3.scale.ordinal().domain(['first', 'second', 'third']).range([0,1,2]).rangeBands([60,400]);
-
-var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(3);
-
-
 
 
 function drawPlot(dataset){
+    
+    var firstGroup = svg.append("g");
+    
+    var firstClassRow = firstGroup.selectAll("rect")
+                            .data(ds)
+                            .enter()
+                            .append("rect")
+                            .attr(
+               {                 //cy:function(d){return  d.Pclass*100 + getRandom();},
+                                y : function (d){ return class_scale("First") -bar_height/2;} ,
+                                //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
+                                //r:function(d){return ageScale(d.Age);},
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_1/d.values.total_class_1) ;}
+                                
+                }            )
+                .on("mouseover",function(d){ tooltip(d,"First");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
+                             
+    var secondGroup = svg.append("g");
+    
+    var secondClassRow = secondGroup.selectAll("rect")
+                            .data(ds)
+                            .enter()
+                            .append("rect")
+                            .attr({
+                                //cy:function(d){return  d.Pclass*100 + getRandom();},
+                                y : function (d){ return class_scale("Second") -bar_height/2 ;} ,
+                                //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
+                                //r:function(d){return ageScale(d.Age);},
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_2/d.values.total_class_2) ;}
+                                
+                                
+                                      
+                             }).on("mouseover",function(d){ tooltip(d,"Second");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
+                             
+                             
+    var thirdGroup = svg.append("g");
+    
+    var thirdClassRow = thirdGroup.selectAll("rect")
+                            .data(ds)
+                            .enter()
+                            .append("rect")
+                            .attr({
+                                //cy:function(d){return  d.Pclass*100 + getRandom();},
+                                 y : function (d){ return class_scale("Third") -bar_height/2 ;} ,
+                                //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
+                                x:function (d){ return age_scale(d.key)-5/2 ;},
+                                //r:function(d){return ageScale(d.Age);},
+                                width: bar_width,
+                                height: bar_height,
+                    
+                                fill: function (d){ return getColor(d.values.survived_class_3/d.values.total_class_3) ;}
+                                
+                                
+                                      
+                             }).on("mouseover",function(d){ tooltip(d,"Third");})					
+                .on("mouseout", function(d) {		
+                    div.transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });;
 
-  svg.selectAll("circle")
-     .data(dataset)
-     .enter()
-     .append("circle")
-     .attr({
-        //cy:function(d){return  d.Pclass*100 + getRandom();},
-        cy : function (d){ return getYByClass(d) + getYByAge(d);},
-        //cx:function(d){return 150 + getGender(d.Sex)*100 + getRandom();},
-        cx:function(d){return getXByAge(d)+getXByGender(d)},
-        //r:function(d){return ageScale(d.Age);},
-        r:function(d){return 3;},
-        alpha:0.5,
-        fill : function(d){
-          if( d.Survived === "0"){
-            return '#666666';            
-          }else{
-            return '#A0D25B';            
-          }
-        }
-              
-     });
+        
+        var legendGroup = svg.append("g");
 
-
-  svg.append("g").call(xAxis).attr("class","axis")
-                             .attr("transform","translate(20,"+(h-90)+")");
-  svg.append("g").call(yAxis).attr("class","axis")  
-                             .attr("transform","translate("+80+",0)");
-
-  // add axis labels
-  svg.append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "center")
-    .attr("y", 20)
-    .attr("x",-250)
-    .attr("transform", "rotate(-90)")
-    .text("Ticket Class");
-
-  svg.append("text")
-     .attr("class","x label")
-     .attr({"y" : 440 ,"x" : 250, "text-anchor" :"center"}).text("Gender")
-
-  //add guides
-  d3.select('svg').append('circle').attr({cx:480, cy:90,r:6, fill:"#A0D25B  "});
-  d3.select('svg').append('text').attr({x:500 , y:95}).text("Survived");
-
-  d3.select('svg').append('circle').attr({cx:480, cy:110,r:6, fill:"#666666"});
-  d3.select('svg').append('text').attr({x:500, y:115}).text("Not Survived");
-
-  debugger;
-  //add age guides
-  // d3.select('svg').append('circle').attr({cx:480, cy:150,r:ageScale(4), fill:"#666666", stroke:"white"});
-  // d3.select('svg').append('text').attr({x:500, y:155}).text("Age 4 yrs");
-
-  
-  // d3.select('svg').append('circle').attr({cx:480, cy:170,r:ageScale(40), fill:"#666666", stroke:"white"});
-  // d3.select('svg').append('text').attr({x:500, y:175}).text("Age 40 yrs");
-
-
-  // d3.select('svg').append('circle').attr({cx:480, cy:190,r:ageScale(90), fill:"#666666", stroke:"white"});
-  // d3.select('svg').append('text').attr({x:500, y:195}).text("Age 98 yrs");
-
-  //add title
-  d3.select("svg").append("text").text("Titanic Survivorship data by age, gender,class").attr({x:110,y:20,"font-size":"20px","text-anchor":"center"})
-
+        legend = legendGroup.selectAll("rect")
+            .data(colors)
+            .enter()
+            .append("rect")
+            .attr({
+               x : function(d,i) {return 40*i;} ,
+               y : 10,
+               width : 40,
+               height :20 ,
+               fill : function(d,i){return colors[i];}
+               
+            });
+        svg.append("text")
+            .attr({
+                x : 0,
+                y : 42
+            })
+            .text("0%");
+            
+        svg.append("text")
+            .attr({
+                x :170,
+                y:42,
+            })
+            .text("100%");
+            
+        svg.append("text")
+            .attr({
+                x:0,
+                y:8
+            })
+            .text("Survival Percentage");
+            
+        
 
 }
 
+drawPlot(data);
 
+d3.select("svg")
+    .append("g")
+    .attr("class","x axis")
+    .attr("transform",  "translate(0," + (h-40) +")")
+    .call(age_axis);
+    
+d3.select("svg")
+    .append("g")
+    .attr("class","y axis")
+    .attr("transform",  "translate("+ (margin+30) + ",0)")
+    .call(class_axis);
+    //add labels for axis 
+d3.select("svg")
+    .append("text")
+    .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+    .attr("transform", "translate("+ w/2 +","+(h)+")")  // text is drawn off the screen top left, move down and out and rotate
+    .text("Age");
+    
+d3.select("svg")
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("transform","translate(0 , "+ ((plot_height)*1.5+20) +")")
+    .text("Class");
+
+};
+
+
+
+
+</script>
+
+<script type="text/javascript">
+
+
+function saveDataandDraw(data){
+    var globaldata = data;
+    draw(globaldata);
+}
+
+    d3.csv("data/train.csv", function(d){
+        d['Age'] = +d['Age']
+        
+        return d;
+    },saveDataandDraw);
+    
+
+function updatePlot(){
+    d3.select("svg").remove();
+    draw(globaldata);
+}
+    
 </script>
 </body>
 </html>
